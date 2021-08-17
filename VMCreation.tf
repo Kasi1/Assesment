@@ -1,5 +1,5 @@
 
-rovider "azurerm" {
+provider "azurerm" {
   version = "=2.5.0"
   subscription_id ="Subscription"
   tenant_id = "Tenant details"
