@@ -1,0 +1,9 @@
+To Work on terraform required tools
+
+ Download and install terraform latest version
+ VSCode
+ Download required terraform plugins to get syntax
+ To store we can repositories like (Git , azure repos , Bitbucket etc..)
+
+
+

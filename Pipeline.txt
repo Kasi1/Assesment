@@ -1,0 +1,66 @@
+ 1. Once code is ready in repository
+ 2. Goto pipeline session azure devops 
+ 3. select the repository
+ 4. select the pipeline( Classic editor or YAML)
+
+ If classic editor download pulgin related terraform
+  add tasks to pipeline
+  Terraform Init 
+  terraform validate
+  terraform Plan
+  terraform apply
+  publish artifacts 
+  then save and run 
+  
+
+If YAML 
+
+trigger: none
+ 
+pool:
+  name: Azure Pipelines
+  vmImage: 'vs2017-win2016'
+
+  stages:
+  - stage: validate
+    jobs:
+      -job : validate
+    continueOnError: false
+    steps:
+ 
+    - task: TerraformInstaller@0
+      inputs:
+      terraformVersion: '1.0.2'
+
+    - task: TerraformTaskV2@2
+      inputs:
+                provider: 'azurerm'
+                command: 'init'
+                backendServiceArm: 'SPN'
+                backendAzureRmResourceGroupName: 'RootVM'
+                backendAzureRmStorageAccountName: 'rootvm11'
+                backendAzureRmContainerName: 'containerterrafrom'
+                backendAzureRmKey: 'dev.terraform.tfstate'
+
+
+    - task: TerraformTaskV2@2
+      inputs:
+                provider: 'azurerm'
+                command: 'validate'     
+  - stage : plan
+  dependsOn: [validate]
+  condition: succeeded('validate')
+  jobs:
+  - job: terraform_plan
+  steps:
+  - task: TerraformTaskV2@2
+    inputs:
+      provider: 'azurerm'
+      command: 'plan'
+      environmentServiceNameAzureRM: 'SPN'
+  
+  - task: TerraformTaskV2@2
+    inputs:
+      provider: 'azurerm'
+      command: 'apply'
+      environmentServiceNameAzureRM: 'SPN'
